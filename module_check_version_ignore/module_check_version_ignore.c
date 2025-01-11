@@ -32,7 +32,8 @@ static void check_version_after(hook_fargs4_t *args, void *udata) {
 static void check_version_before(hook_fargs4_t *args, void *udata) {
   pr_info("before add check_version\n");
   if (!(int)args->ret) {
-    pr_warn("the return value of check_version is 0, try to bypass by set it to 1\n");
+    pr_warn("the return value of check_version is 0, try to bypass by set it "
+            "to 1\n");
     args->ret = 1;
   }
 }
