@@ -14,15 +14,18 @@
 #define lookup_name(func)                                                      \
   func = 0;                                                                    \
   func = (typeof(func))kallsyms_lookup_name(#func);                            \
-  pr_info("kernel function %s addr: %llx\n", #func, func);                     \
   if (!func) {                                                                 \
     pr_err("lookup %s failed: make sure symbol %s is exported\n", #func,       \
            #func);                                                             \
     return -21;                                                                \
-  }
+  }                                                                            \
+  pr_info("kernel function %s addr: %llx\n", #func, func);
 
 #define hook_func(func, argv, before, after, udata)                            \
   if (!func) {                                                                 \
+    pr_err("the address of symbol %s is 0: maybe you should first lookup "     \
+           "successfully",                                                     \
+           #func);                                                             \
     return -22;                                                                \
   }                                                                            \
   hook_err_t hook_err_##func = hook_wrap(func, argv, before, after, udata);    \
