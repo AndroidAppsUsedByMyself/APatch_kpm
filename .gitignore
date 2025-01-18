@@ -30,4 +30,3 @@ target/
 
 # path introduced by nix
 .direnv/
-result/
