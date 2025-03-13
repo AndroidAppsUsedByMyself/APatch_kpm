@@ -44,16 +44,10 @@ fs_struct_pwd_offset = UZERO, fs_struct_lock_offset = UZERO;
 char hosts_source[] = "/system/etc/hosts";
 char hosts_target[] = "/data/adb/hosts/0";
 
-static uid_t current_uid() {
-  struct cred* cred = *(struct cred**)((uintptr_t)current + task_struct_offset.cred_offset);
-  uid_t uid = *(uid_t*)((uintptr_t)cred + cred_offset.uid_offset);
-  return uid;
-}
-
 static inline void set_priv_selinx_allow(struct task_struct* task, int val) {
   struct task_ext* ext = get_task_ext(task);
   if (likely(task_ext_valid(ext))) {
-    ext->priv_selinux_allow = val;
+    ext->priv_sel_allow = val;
     dsb(ish);
   }
 }
