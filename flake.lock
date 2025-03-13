@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "KernelPatch": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1739789994,
+        "narHash": "sha256-3RpGcLgyDfpyvl9qrav2XJzL3+IB6ByqTAJvMObKbrk=",
+        "owner": "bmax121",
+        "repo": "KernelPatch",
+        "rev": "362c0b3f9598a1420a4263e484fb6414bf583896",
+        "type": "github"
+      },
+      "original": {
+        "owner": "bmax121",
+        "repo": "KernelPatch",
+        "rev": "362c0b3f9598a1420a4263e484fb6414bf583896",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -20,11 +37,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1734074593,
-        "narHash": "sha256-6OrClmfbj+t18NwOc/27Hur/KId/LiHP5ZZHgFV78KY=",
+        "lastModified": 1741881631,
+        "narHash": "sha256-hfLZML8UYcZeRVALKO072OM33twQShYIl4ov40SXc2c=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1d608eb533a3ca244d255c812d5e88fae3bd047e",
+        "rev": "98bfb6f8577abc5730cb50f63af298e9db58c0d2",
         "type": "github"
       },
       "original": {
@@ -35,6 +52,7 @@
     },
     "root": {
       "inputs": {
+        "KernelPatch": "KernelPatch",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs"
       }

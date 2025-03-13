@@ -4,12 +4,18 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    KernelPatch = {
+      url = "github:bmax121/KernelPatch/362c0b3f9598a1420a4263e484fb6414bf583896";
+      flake = false;
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
+    KernelPatch,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
@@ -32,31 +38,28 @@
             pname = folder;
             version = "1.0";
 
-            #src = builtins.path {
-            #  path = self;
-            #};
-
-            src = pkgs.fetchFromGitHub {
-              owner = "AndroidAppsUsedByMyself";
-              repo = "APatch_kpm";
-              rev = "05510c532bf9dd05c6b6612a8fb9be570980bde0";
-              fetchSubmodules = true;
-              hash = "sha256-IkFT80/vxKMxMU6qTSPLmJ1jGqVej2lpQaOCws/5AQo=";
+            src = builtins.path {
+              path = self;
             };
 
-            buildInputs = [pkgs.llvm pkgs.clang pkgs.git];
+            buildInputs = with pkgs; [llvm clang git];
+
+            patchPhase = ''
+              mkdir -vp src/KernelPatch
+              cp -r ${src}/* ./src
+              cp -r ${KernelPatch}/* src/KernelPatch
+              ls -R src
+            '';
 
             buildPhase = ''
               set -e
-              mkdir -vp $out/kpm_packages/${folder}
-              cp -r ${src} $out/src
-              cd $out/src/${folder}
               chmod -R u+w .
-              make -C $out/src/${folder}
+              mkdir -vp $out/kpm_packages/${folder}
+              make -C src/${folder}
             '';
 
             installPhase = ''
-              find "$out/src/${folder}" -name "*.kpm" -exec sh -c 'echo "Copying file: {}" && cp {} "$out/kpm_packages/${folder}"' \;
+              find "src/${folder}" -name "*.kpm" -exec sh -c 'echo "Copying file: {}" && cp {} "$out/kpm_packages/${folder}"' \;
             '';
 
             meta = {
@@ -93,9 +96,9 @@
           echo "Welcome to the KPM DevShell! LLVM, Clang, and build tools are available."
         '';
       };
-    in {
+    in rec {
       # Individual packages for each KPM module
-      packages =
+      kpmPackages =
         builtins.listToAttrs (builtins.map (folder: {
             name = folder;
             value = pkgs.lib.getAttr folder modulePackages;
@@ -103,6 +106,9 @@
           listKpmDirs)
         // {"all-kpm" = allKpmPackage;};
 
-      devShell = devShell;
+      packages = kpmPackages;
+      devShells = {
+        default = devShell;
+      };
     });
 }
