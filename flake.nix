@@ -28,7 +28,7 @@
       # List directories excluding "KernelPatch" and ensuring they have a Makefile
       listKpmDirs =
         builtins.filter
-        (dir: dir != "KernelPatch" && builtins.pathExists (self + "/" + dir + "/Makefile"))
+        (dir: dir != "KernelPatch" && dir != "Utils" && builtins.pathExists (self + "/" + dir + "/Makefile"))
         (builtins.attrNames (builtins.readDir self));
 
       # Generate individual KPM module packages
