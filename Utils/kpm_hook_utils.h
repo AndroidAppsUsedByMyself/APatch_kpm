@@ -14,6 +14,8 @@
 #define hook_backup_def(func) static func##_func_t backup_##func = NULL
 #define hook_replace_func_include(func, retType, ...) static retType hook_replace(func)(__VA_ARGS__)
 
+#define HOOK_NOT_HOOK 1024
+
 #define hook_func_def(func, retType, ...)                  \
     hook_typedef(func, retType, __VA_ARGS__);              \
     hook_original_def(func);                               \

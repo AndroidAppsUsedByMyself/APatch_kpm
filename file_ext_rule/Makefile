@@ -31,18 +31,18 @@ INCLUDE_DIRS_RAW := Utils
 INCLUDE_FLAGS := $(foreach dir,$(INCLUDE_DIRS),-I$(KP_DIR)/kernel/$(dir))
 INCLUDE_FLAGS += $(foreach dir,$(INCLUDE_DIRS_RAW),-I$(PROJECT_ROOT)/$(dir))
 
-objs := FDR.o
+objs := file_ext_rule.o
 
-all: FDR_$(MYKPM_VERSION).kpm
+all: file_ext_rule_$(MYKPM_VERSION).kpm
 
 debug: CFLAGS += -DDEBUG
 debug: HR_VER := _d
-debug: FDR_$(MYKPM_VERSION)_debug.kpm
+debug: file_ext_rule_$(MYKPM_VERSION)_debug.kpm
 
-FDR_$(MYKPM_VERSION).kpm: ${objs}
+file_ext_rule_$(MYKPM_VERSION).kpm: ${objs}
 	${CC} -r -o $@ $^
 
-FDR_$(MYKPM_VERSION)_debug.kpm: ${objs}
+file_ext_rule_$(MYKPM_VERSION)_debug.kpm: ${objs}
 	${CC} -r -o $@ $^
 
 %.o: %.c

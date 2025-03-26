@@ -8,6 +8,7 @@
 - [ ] design a config format
 - [ ] impl a config parser
 - [ ] impl a convenient User Interface and Command Line Interface
+- [ ] find a solution to reduce memory usage(maybe dynamic alloc memory)
 
 ## why
 lots of hook on one function may not work so i try to merge them to one

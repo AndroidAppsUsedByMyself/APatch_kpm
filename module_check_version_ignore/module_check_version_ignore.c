@@ -16,6 +16,10 @@
 
 #include "module_check_version_ignore.h"
 
+#ifndef MYKPM_VERSION
+#define MYKPM_VERSION "0.0.1"
+#endif
+
 KPM_NAME("module_check_version_ignore");
 KPM_VERSION(MYKPM_VERSION);
 KPM_LICENSE("GPL v2");
