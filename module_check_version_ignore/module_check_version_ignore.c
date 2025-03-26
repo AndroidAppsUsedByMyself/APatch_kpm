@@ -28,14 +28,14 @@ static int (*check_version)(const struct load_info *info, const char *symname,
 
 static void check_version_after(hook_fargs4_t *args, void *udata) {
   pr_info("after add check_version\n");
-}
-static void check_version_before(hook_fargs4_t *args, void *udata) {
-  pr_info("before add check_version\n");
   if (!(int)args->ret) {
     pr_warn("the return value of check_version is 0, try to bypass by set it "
             "to 1\n");
     args->ret = 1;
   }
+}
+static void check_version_before(hook_fargs4_t *args, void *udata) {
+  pr_info("before add check_version\n");
 }
 
 static long inline_hook_init(const char *args, const char *event,
