@@ -7,7 +7,7 @@
 
 #define PATH_MAX 256
 #define MAX_LINES 10
-#define MAX_INPUT_SIZE 4096
+#define MAX_INPUT_SIZE 512
 
 struct vfsmount;
 struct dentry;

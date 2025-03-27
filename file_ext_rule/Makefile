@@ -31,7 +31,7 @@ INCLUDE_DIRS_RAW := Utils
 INCLUDE_FLAGS := $(foreach dir,$(INCLUDE_DIRS),-I$(KP_DIR)/kernel/$(dir))
 INCLUDE_FLAGS += $(foreach dir,$(INCLUDE_DIRS_RAW),-I$(PROJECT_ROOT)/$(dir))
 
-objs := file_ext_rule.o
+objs := file_ext_rule.o data_parser.o
 
 all: file_ext_rule_$(MYKPM_VERSION).kpm
 

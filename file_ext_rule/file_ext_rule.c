@@ -55,8 +55,6 @@ static int restrict_do_renameat2_target_rule_line_count = 0;
 static char restrict_do_filp_open_paths[MAX_LINES][PATH_MAX];
 static int restrict_do_filp_open_rule_line_count = 0;
 
-#define MAX_PROTECTED_PATHS 4000 // 最大保护路径数量
-#define MAX_PATH_LENGTH 512      // 每个路径的最大长度
 #ifndef false
 #define false 0
 #endif
@@ -68,7 +66,7 @@ static int restrict_do_filp_open_rule_line_count = 0;
 // 删除文件拦截
 static void do_unlinkat_before(hook_fargs1_t *args, void *udata) {
   struct filename *pathname = (struct filename *)args->arg1;
-  char path_buf[MAX_PROTECTED_PATHS];
+  char path_buf[PATH_MAX];
 
   // 默认放行
   args->skip_origin = false;
@@ -80,8 +78,8 @@ static void do_unlinkat_before(hook_fargs1_t *args, void *udata) {
   }
 
   // 初始化缓冲区
-  memset(path_buf, 0, MAX_PROTECTED_PATHS);
-  strncpy(path_buf, pathname->name, MAX_PROTECTED_PATHS - 1);
+  memset(path_buf, 0, PATH_MAX);
+  strncpy(path_buf, pathname->name, PATH_MAX - 1);
 
   // 检查是否在受保护目录列表中
   for (int i = 0; i < restrict_do_unlinkat_rule_line_count; i++) {
@@ -100,7 +98,7 @@ static void do_unlinkat_before(hook_fargs1_t *args, void *udata) {
 // 删除路径拦截
 static void do_rmdir_before(hook_fargs2_t *args, void *udata) {
   struct filename *pathname = (struct filename *)args->arg1;
-  char path_buf[MAX_PROTECTED_PATHS];
+  char path_buf[PATH_MAX];
 
   // 默认放行
   args->skip_origin = false;
@@ -112,8 +110,8 @@ static void do_rmdir_before(hook_fargs2_t *args, void *udata) {
   }
 
   // 初始化缓冲区
-  memset(path_buf, 0, MAX_PROTECTED_PATHS);
-  strncpy(path_buf, pathname->name, MAX_PROTECTED_PATHS - 1);
+  memset(path_buf, 0, PATH_MAX);
+  strncpy(path_buf, pathname->name, PATH_MAX - 1);
 
   // 检查是否在受保护目录列表中
   for (int i = 0; i < restrict_do_unlinkat_rule_line_count; i++) {
@@ -133,8 +131,8 @@ static void do_rmdir_before(hook_fargs2_t *args, void *udata) {
 static void do_renameat2_before(hook_fargs3_t *args, void *udata) {
   struct filename *oldname = (struct filename *)args->arg1;
   struct filename *newname = (struct filename *)args->arg3;
-  char old_path[MAX_PROTECTED_PATHS];
-  char new_path[MAX_PROTECTED_PATHS];
+  char old_path[PATH_MAX];
+  char new_path[PATH_MAX];
 
   // 默认放行
   args->skip_origin = false;
@@ -147,10 +145,10 @@ static void do_renameat2_before(hook_fargs3_t *args, void *udata) {
   }
 
   // 获取源路径和目标路径
-  memset(old_path, 0, MAX_PROTECTED_PATHS);
-  memset(new_path, 0, MAX_PROTECTED_PATHS);
-  strncpy(old_path, oldname->name, MAX_PROTECTED_PATHS - 1);
-  strncpy(new_path, newname->name, MAX_PROTECTED_PATHS - 1);
+  memset(old_path, 0, PATH_MAX);
+  memset(new_path, 0, PATH_MAX);
+  strncpy(old_path, oldname->name, PATH_MAX - 1);
+  strncpy(new_path, newname->name, PATH_MAX - 1);
 
   // 检查是否在受保护目录列表中
   for (int i = 0; i < restrict_do_renameat2_source_rule_line_count; i++) {
@@ -185,11 +183,11 @@ static struct file *hook_replace(do_filp_open)(int dfd,
   struct file *filp = hook_backup(do_filp_open)(dfd, pathname, op);
   if (likely(!IS_ERR(filp))) {
 
-    char path_buf[MAX_PROTECTED_PATHS];
+    char path_buf[PATH_MAX];
 
     // 初始化缓冲区
-    memset(path_buf, 0, MAX_PROTECTED_PATHS);
-    char *currPath = kf_d_path(&filp->f_path, path_buf, MAX_PROTECTED_PATHS);
+    memset(path_buf, 0, PATH_MAX);
+    char *currPath = kf_d_path(&filp->f_path, path_buf, PATH_MAX);
 
     // 对其他路径，只在写入和创建时进行保护
     if ((op->open_flag & (O_WRONLY | O_RDWR | O_CREAT | O_TRUNC))) {
@@ -238,10 +236,10 @@ static inline bool installHook() {
   kf_do_rmdir = (void *)kallsyms_lookup_name("do_rmdir");
   kf_do_renameat2 = (void *)kallsyms_lookup_name("do_renameat2");
 
-  // 安装其他 hook
-  kf_do_unlinkat &&hook_wrap1(kf_do_unlinkat, do_unlinkat_before, NULL, NULL);
-  kf_do_rmdir &&hook_wrap2(kf_do_rmdir, do_rmdir_before, NULL, NULL);
-  kf_do_renameat2 &&hook_wrap3(kf_do_renameat2, do_renameat2_before, NULL,
+  // 安装 wrap hook
+  kf_do_unlinkat && hook_wrap1(kf_do_unlinkat, do_unlinkat_before, NULL, NULL);
+  kf_do_rmdir && hook_wrap2(kf_do_rmdir, do_rmdir_before, NULL, NULL);
+  kf_do_renameat2 && hook_wrap3(kf_do_renameat2, do_renameat2_before, NULL,
                                NULL);
   // 打印 hook 状态，同时考虑函数是否存在
   pr_info("[FER]: do_rmdir : %px", kf_do_rmdir);
