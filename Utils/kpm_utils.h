@@ -8,6 +8,7 @@
 #include <linux/cred.h>
 #include <linux/printk.h>
 #include <linux/sched.h>
+#include <linux/string.h>
 
 #include "sk_func.h"
 
