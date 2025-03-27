@@ -31,7 +31,7 @@ static long test_kf_vmalloc_init(const char *args, const char *event,
 static long test_kf_vmalloc_control0(const char *args, char *__user out_msg,
                                      int outlen) {
   pr_info("kpm test_kf_vmalloc control0, args: %s\n", args);
-  char *echo = kf_vmalloc(64);
+  char *echo = (char *)kf_vmalloc(64);
   strncat(echo, "echo: ", 7);
   strncat(echo, args, 48);
   writeOutMsg(out_msg, &outlen, echo);
